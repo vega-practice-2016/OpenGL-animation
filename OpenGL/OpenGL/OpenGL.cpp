@@ -1,182 +1,177 @@
-// OpenGL.cpp: определяет точку входа для приложения.
+// OpenGL.cpp: определяет точку входа для консольного приложения.
 //
 
 #include "stdafx.h"
-#include "OpenGL.h"
+#include <stdio.h>
+#include <stdarg.h>
+#include <math.h>
+#include <GL/glut.h>
+#include <gl/GL.h>
+#include <time.h>
+#include <Stdlib.h>
 
-#define MAX_LOADSTRING 100
 
-// Глобальные переменные:
-HINSTANCE hInst;								// текущий экземпляр
-TCHAR szTitle[MAX_LOADSTRING];					// Текст строки заголовка
-TCHAR szWindowClass[MAX_LOADSTRING];			// имя класса главного окна
+#define DisplayWidth 800
+#define DisplayHeight 600 //высота окна
+#define PI 3.141592
+#define DropsCount 30 // количество капель
 
-// Отправить объявления функций, включенных в этот модуль кода:
-ATOM				MyRegisterClass(HINSTANCE hInstance);
-BOOL				InitInstance(HINSTANCE, int);
-LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 
-int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPTSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
+
+int DisplayWidthNew; //новая ширина окна
+int DisplayHeightNew; //новая высота окна
+void display();
+struct drop{
+	int x;
+	int y;
+};
+typedef struct drop DROP;
+DROP drops[DropsCount];
+
+void display()
 {
-	UNREFERENCED_PARAMETER(hPrevInstance);
-	UNREFERENCED_PARAMETER(lpCmdLine);
+	glBegin(GL_QUADS);
 
- 	// TODO: разместите код здесь.
-	MSG msg;
-	HACCEL hAccelTable;
+	glColor3f(0.0, 1.0, 1.0);// синий
+	glVertex2f(0.0, 0.0);
+	glVertex2f(DisplayWidthNew, 0.0);
+	glVertex2f(DisplayWidthNew, DisplayHeightNew / 6);
+	glVertex2f(0.0, DisplayHeightNew / 6);
+	
 
-	// Инициализация глобальных строк
-	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-	LoadString(hInstance, IDC_OPENGL, szWindowClass, MAX_LOADSTRING);
-	MyRegisterClass(hInstance);
+	glColor3f(0.26, 0.67, 1.0);// голубой
+	glVertex2f(0.0, DisplayHeightNew / 6);
+	glVertex2f(DisplayWidthNew, DisplayHeightNew / 6);
+	glVertex2f(DisplayWidthNew, DisplayHeightNew);
+	glVertex2f(0.0, DisplayHeightNew);
+	
+	 glEnd();
+	 glBegin(GL_QUAD_STRIP);
+	 glColor3f(0.6, 0.3, 0.0);
+	 glVertex2f(100, 125); 
+	 glVertex2f(150, 75);       
+	 glVertex2f(350, 125);
+	 glVertex2f(300, 75);   
+	 glEnd();
+	 
+	 glBegin(GL_QUAD_STRIP);
+	 glColor3f(1.0, 0.0, 1.0);
+	 glVertex2f(235, 250);
+	 glVertex2f(300, 250);
+	 glVertex2f(300, 220);
+	 glVertex2f(235, 220);
+	 glEnd();
+	 glBegin(GL_TRIANGLES);
+	 glColor3f(1.0, 1.0, 1.0);
+	 glVertex2f(228, 220);
+	 glVertex2f(300, 125);
+	 glVertex2f(150, 125);
+	 glEnd();
+	 glBegin(GL_QUAD_STRIP);
+	 glColor3f(0.6, 0.2, 0.0);
+	 glVertex2f(220, 125);
+	 glVertex2f(235, 125);
+	 glVertex2f(220, 250);
+	 glVertex2f(235, 250);
+	 glEnd();
+	 
 
-	// Выполнить инициализацию приложения:
-	if (!InitInstance (hInstance, nCmdShow))
+
+
+
+
+
+
+
+	
+
+
+	 glBegin(GL_POLYGON);// солнце
+	glColor3f(1.0, 1.0, 0.0);// желтый
+	for (float radius = (DisplayHeightNew > DisplayWidthNew ? DisplayWidthNew / 80 * 6 : DisplayHeightNew / 10), i = 0; i <= 2 * PI; i += 0.05)
 	{
-		return FALSE;
+		glVertex2f(radius * cos(i) + DisplayWidthNew / 8 * 6.5, radius * sin(i) + DisplayHeightNew / 6 * 5);
 	}
+	glEnd();
 
-	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_OPENGL));
 
-	// Цикл основного сообщения:
-	while (GetMessage(&msg, NULL, 0, 0))
+
+	
+
+	
+
+}
+void rain(int numDrops)
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+	display();
+
+	glLineWidth(3);
+
+	glBegin(GL_LINES); //капельки
+	glColor3f(0.54, 0.57, 0.51); // серый
+
+	for (int i = 0; i < DropsCount; ++i)
 	{
-		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-	}
+		if (drops[i].x < 0)
+			drops[i].x = DisplayWidthNew;
+		if (drops[i].y < 0)
+			drops[i].y = DisplayHeightNew;
 
-	return (int) msg.wParam;
+		glVertex2f(drops[i].x, drops[i].y);
+		glVertex2f(drops[i].x + 5, drops[i].y + 5);
+
+		drops[i].x -= 15;
+		drops[i].y -= 15;
+	}
+	glEnd();
+	glFlush();
+	glutTimerFunc(10, rain, 0);
+}
+
+void Reshape(int Width, int Height)
+{
+	if (Height == 0)
+	{
+		Height = 1;
+	}
+	
+	DisplayWidthNew = Width;
+	DisplayHeightNew = Height;
+	glViewport(0, 0, (GLsizei)Width, (GLsizei)Height);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0.0, (GLdouble)Width, 0.0, (GLdouble)Height);
+	display();
+	glFlush();
+}
+void init()
+{
+	glClearColor(1.0, 1.0, 1.0, 1.0);
 }
 
 
-
-//
-//  ФУНКЦИЯ: MyRegisterClass()
-//
-//  НАЗНАЧЕНИЕ: регистрирует класс окна.
-//
-ATOM MyRegisterClass(HINSTANCE hInstance)
+int main(int argc, char **argv)
 {
-	WNDCLASSEX wcex;
-
-	wcex.cbSize = sizeof(WNDCLASSEX);
-
-	wcex.style			= CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc	= WndProc;
-	wcex.cbClsExtra		= 0;
-	wcex.cbWndExtra		= 0;
-	wcex.hInstance		= hInstance;
-	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_OPENGL));
-	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
-	wcex.lpszMenuName	= MAKEINTRESOURCE(IDC_OPENGL);
-	wcex.lpszClassName	= szWindowClass;
-	wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
-
-	return RegisterClassEx(&wcex);
-}
-
-//
-//   ФУНКЦИЯ: InitInstance(HINSTANCE, int)
-//
-//   НАЗНАЧЕНИЕ: сохраняет обработку экземпляра и создает главное окно.
-//
-//   КОММЕНТАРИИ:
-//
-//        В данной функции дескриптор экземпляра сохраняется в глобальной переменной, а также
-//        создается и выводится на экран главное окно программы.
-//
-BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
-{
-   HWND hWnd;
-
-   hInst = hInstance; // Сохранить дескриптор экземпляра в глобальной переменной
-
-   hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
-
-   if (!hWnd)
-   {
-      return FALSE;
-   }
-
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
-
-   return TRUE;
-}
-
-//
-//  ФУНКЦИЯ: WndProc(HWND, UINT, WPARAM, LPARAM)
-//
-//  НАЗНАЧЕНИЕ:  обрабатывает сообщения в главном окне.
-//
-//  WM_COMMAND	- обработка меню приложения
-//  WM_PAINT	-Закрасить главное окно
-//  WM_DESTROY	 - ввести сообщение о выходе и вернуться.
-//
-//
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	int wmId, wmEvent;
-	PAINTSTRUCT ps;
-	HDC hdc;
-
-	switch (message)
+	srand(time(NULL));
+	for (int i = 0; i < DropsCount; ++i)
 	{
-	case WM_COMMAND:
-		wmId    = LOWORD(wParam);
-		wmEvent = HIWORD(wParam);
-		// Разобрать выбор в меню:
-		switch (wmId)
-		{
-		case IDM_ABOUT:
-			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-			break;
-		case IDM_EXIT:
-			DestroyWindow(hWnd);
-			break;
-		default:
-			return DefWindowProc(hWnd, message, wParam, lParam);
-		}
-		break;
-	case WM_PAINT:
-		hdc = BeginPaint(hWnd, &ps);
-		// TODO: добавьте любой код отрисовки...
-		EndPaint(hWnd, &ps);
-		break;
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		break;
-	default:
-		return DefWindowProc(hWnd, message, wParam, lParam);
+		drops[i].x = rand() % DisplayWidth;
+		drops[i].y = rand() % DisplayHeight;
 	}
+
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE);
+	glutInitWindowPosition(100, 100);
+	glutInitWindowSize(DisplayWidth, DisplayHeight);
+	glutCreateWindow("Main window");
+	init();
+	glutDisplayFunc(display);
+	glutReshapeFunc(Reshape);
+
+	glutTimerFunc(200, rain, 0);
+
+	glutMainLoop();
+
 	return 0;
-}
-
-// Обработчик сообщений для окна "О программе".
-INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	UNREFERENCED_PARAMETER(lParam);
-	switch (message)
-	{
-	case WM_INITDIALOG:
-		return (INT_PTR)TRUE;
-
-	case WM_COMMAND:
-		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-		{
-			EndDialog(hDlg, LOWORD(wParam));
-			return (INT_PTR)TRUE;
-		}
-		break;
-	}
-	return (INT_PTR)FALSE;
 }

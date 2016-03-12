@@ -24,12 +24,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenGL.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -38,18 +32,5 @@
     <ClCompile Include="OpenGL.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="OpenGL.rc">
-      <Filter>Файлы ресурсов</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="small.ico">
-      <Filter>Файлы ресурсов</Filter>
-    </Image>
-    <Image Include="OpenGL.ico">
-      <Filter>Файлы ресурсов</Filter>
-    </Image>
   </ItemGroup>
 </Project>
