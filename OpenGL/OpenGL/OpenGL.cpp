@@ -5,16 +5,22 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <math.h>
+#include <Stdlib.h>
 #include <GL/glut.h>
 #include <gl/GL.h>
 #include <time.h>
-#include <Stdlib.h>
+
 
 
 #define DisplayWidth 800
 #define DisplayHeight 600 //высота окна
 #define PI 3.141592
-#define DropsCount 30 // количество капель
+#define DropsCount 120 // количество капель
+
+
+float z = 0;
+float u = 0;
+float k = 0;
 
 
 
@@ -78,24 +84,45 @@ void display()
 
 
 
+	 
+	 
 
 
-
-
-
+		 
 	
-
+	 
+	 
 
 	 glBegin(GL_POLYGON);// солнце
 	glColor3f(1.0, 1.0, 0.0);// желтый
 	for (float radius = (DisplayHeightNew > DisplayWidthNew ? DisplayWidthNew / 80 * 6 : DisplayHeightNew / 10), i = 0; i <= 2 * PI; i += 0.05)
-	{
-		glVertex2f(radius * cos(i) + DisplayWidthNew / 8 * 6.5, radius * sin(i) + DisplayHeightNew / 6 * 5);
+	
+
+		{
+		
+				glVertex2f(radius * cos(i) + DisplayWidthNew / 10 * 6.5 - z, radius * sin(i) + DisplayHeightNew / 6 * 5+u);
+			
+		}
+	if (k != -1){
+		if (z <= 50){
+
+
+			++z;
+			++u;
+		}
+		else
+		{
+			++z;
+			--u;
+			if (u == -50)
+			{
+				k = -1;
+			}
+		}
+
 	}
+
 	glEnd();
-
-
-
 	
 
 	
