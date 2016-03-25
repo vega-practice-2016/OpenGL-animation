@@ -18,9 +18,9 @@
 #define DropsCount 120 // количество капель
 
 
-float z = 0;
-float u = 0;
-float k = 0;
+float axisx = 0;
+float axisy = 0;
+float beacon = 0;
 
 
 
@@ -95,33 +95,54 @@ void display()
 
 	 glBegin(GL_POLYGON);// солнце
 	glColor3f(1.0, 1.0, 0.0);// желтый
-	for (float radius = (DisplayHeightNew > DisplayWidthNew ? DisplayWidthNew / 80 * 6 : DisplayHeightNew / 10), i = 0; i <= 2 * PI; i += 0.05)
+	for (float radius = (DisplayHeightNew > DisplayWidthNew ? DisplayWidthNew / 80 * 6 : DisplayHeightNew / 10), i = 0; i <= 2 * PI; i += 0.1)
 	
 
 		{
 		
-				glVertex2f(radius * cos(i) + DisplayWidthNew / 10 * 6.5 - z, radius * sin(i) + DisplayHeightNew / 6 * 5+u);
+		glVertex2f(radius * cos(i) + DisplayWidthNew / 8 * 6.5 - axisx, radius * sin(i) + DisplayHeightNew / 6 * 5 + axisy);
 			
 		}
-	if (k != -1){
-		if (z <= 50){
+	
+	
+
+	if (beacon != -1){
+		if (axisx <= 400){
 
 
-			++z;
-			++u;
-		}
-		else
-		{
-			++z;
-			--u;
-			if (u == -50)
-			{
-				k = -1;
+			++axisx;
+			++axisy;
 			}
+			else
+			{
+				++axisx;
+				--axisy;
+				if (axisy == -550)
+				{
+					beacon = -1;
+				}
+			}
+
 		}
 
-	}
+	if (beacon == -1){
+		if (axisx >= 400){
 
+
+				--axisx;
+				--axisy;
+			}
+			else
+			{
+				--axisx;
+				++axisy;
+				if (axisy == -550)
+				{
+					beacon = 1;
+				}
+			}
+
+		}
 	glEnd();
 	
 
