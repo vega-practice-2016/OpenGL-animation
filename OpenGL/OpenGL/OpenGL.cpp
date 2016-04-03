@@ -21,6 +21,9 @@
 float axisx = 0;
 float axisy = 0;
 float beacon = 0;
+int p = 0;
+int v = 0;
+
 
 
 
@@ -95,54 +98,91 @@ void display()
 
 	 glBegin(GL_POLYGON);// солнце
 	glColor3f(1.0, 1.0, 0.0);// желтый
-	for (float radius = (DisplayHeightNew > DisplayWidthNew ? DisplayWidthNew / 80 * 6 : DisplayHeightNew / 10), i = 0; i <= 2 * PI; i += 0.1)
-	
-
-		{
-		
-		glVertex2f(radius * cos(i) + DisplayWidthNew / 8 * 6.5 - axisx, radius * sin(i) + DisplayHeightNew / 6 * 5 + axisy);
-			
-		}
-	
-	
-
 	if (beacon != -1){
-		if (axisx <= 400){
-
-
-			++axisx;
-			++axisy;
+		if (axisy <= 350){
+			axisy = axisy + 1;
+			axisx = axisx + 2;
+			p++;
+			if (axisx == 350){
+				beacon = -1;
 			}
-			else
-			{
-				++axisx;
-				--axisy;
-				if (axisy == -550)
-				{
-					beacon = -1;
-				}
-			}
-
 		}
-
-	if (beacon == -1){
-		if (axisx >= 400){
-
-
-				--axisx;
-				--axisy;
-			}
-			else
-			{
-				--axisx;
-				++axisy;
-				if (axisy == -550)
-				{
-					beacon = 1;
-				}
-			}
-
+	}
+	else{
+		if (v <= p){
+			axisy = axisy - 1;
+			axisx = axisx + 2;
+			v++;
 		}
+	}
+	if (v==p)
+	{
+		beacon = 0;
+		axisx = 0;
+		axisy = 0;
+	}
+
+
+		
+	for (float radius = (DisplayHeightNew > DisplayWidthNew ? DisplayWidthNew / 80 * 6 : DisplayHeightNew / 10), i = 0; i <= 2 * PI; i += 0.1)
+
+
+	{
+		
+    
+
+
+
+				glVertex2f(radius * cos(i) + DisplayWidthNew / 8 * 6.5 - axisx, radius * sin(i) + DisplayHeightNew / 6 * 5 + axisy);
+				
+			}
+		
+
+	
+
+
+
+//for (p = 0; p >= 0; p++){
+
+		
+
+/*
+			for (axisy = 100; axisy <= 0; axisy = axisy + 0.1){
+				axisx = axisx + 0.2;
+
+			}
+
+			for (axisy = 100; axisy >= 0; axisy = axisy - 0.1){
+				axisx = axisx + 0.2;
+
+			}*/
+			//axisx = 0;
+	//}
+
+
+	//if (beacon != -1){
+	//	if (axisx <= 100){//50
+
+	//		
+	//		axisx = axisx + 2;//100
+	//		axisy = axisy + 1;//50
+	//		v++;
+	//		}
+	//		else
+	//		{
+	//			for (int t = 0; t < v; t++) {//50
+	//				axisx = axisx + 2;
+	//				axisy = axisy - 1; 
+	//			}
+	//			if (p==0)
+	//			{
+	//				beacon = -1;
+	//			}
+	//		}
+
+	//	}
+
+	
 	glEnd();
 	
 
